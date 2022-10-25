@@ -19,13 +19,13 @@ import (
 // @Failure default {object} errorResponse
 // @Router /api/cityList [get]
 func (h *Handler) apiGetCityList(c *gin.Context) {
-	apiCityList, err := h.services.Api.GetApiCityList()
+	cityList, err := h.services.Api.GetCityNameAndIdListFromDb()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, apiCityList)
+	c.JSON(http.StatusOK, cityList)
 }
 
 // shortInfo godoc
@@ -42,12 +42,12 @@ func (h *Handler) apiGetCityList(c *gin.Context) {
 // @Router /api/shortInfo/{cityName} [get]
 func (h *Handler) shortInfo(c *gin.Context) {
 	cityName := c.Param("cityName")
-	shortCityInfo, err := h.services.GetShortCityInfo(cityName)
+	shortCityWeatherData, err := h.services.GetShortCityWeatherDataByName(cityName)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, shortCityInfo)
+	c.JSON(http.StatusOK, shortCityWeatherData)
 }
 
 // fullInfo godoc
@@ -72,11 +72,11 @@ func (h *Handler) fullInfo(c *gin.Context) {
 		return
 	}
 
-	fullCityInfo, err := h.services.GetFullCityInfo(cityName, t.Format("2006-01-02 15:04:05"))
+	fullCityWeatherData, err := h.services.GetFullCityWeatherData(cityName, t.Format("2006-01-02 15:04:05"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, fullCityInfo)
+	c.JSON(http.StatusOK, fullCityWeatherData)
 }

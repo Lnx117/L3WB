@@ -18,86 +18,88 @@ func NewApiService(repo repository.PostgresQueries) *apiService {
 	return &apiService{repo: repo}
 }
 
-func (a *apiService) GetApiCityList() ([]string, error) {
-	cityNameList, err := a.repo.GetCityNameList()
+func (a *apiService) GetCityNameAndIdListFromDb() ([]string, error) {
+	cityNameAndIdList, err := a.repo.GetCityNameAndIdList()
 	if err != nil {
-		logrus.Error("Querying coordinate info for city list error: %s", err.Error())
+		logrus.Error("Querying coordinate info for city list error (GetCityNameAndIdListFromDb func): %s", err.Error())
 		return nil, err
 	}
 
-	var list []string
-	for _, v := range cityNameList {
-		list = append(list, v.Name)
+	var cityNameList []string
+	for _, v := range cityNameAndIdList {
+		cityNameList = append(cityNameList, v.Name)
 	}
 
-	sort.Slice(list, func(i, j int) bool {
-		return list[i] < list[j]
+	sort.Slice(cityNameList, func(i, j int) bool {
+		return cityNameList[i] < cityNameList[j]
 	})
 
-	return list, nil
+	return cityNameList, nil
 }
 
-func (a *apiService) GetShortCityInfo(cityName string) (L3WB.ShortCityInfoApiAnswer, error) {
-	var shortCityInfo L3WB.ShortCityInfoApiAnswer
-	shortCityInfo.CityName = cityName
+func (a *apiService) GetShortCityWeatherDataByName(cityName string) (L3WB.ShortCityWeatherData, error) {
+	var shortCityWeatherData L3WB.ShortCityWeatherData
+
+	shortCityWeatherData.CityName = cityName
+
 	curentTime := time.Now().Format("02-Jan-2006 15:04:05")
-	cityId, err := a.repo.ReturnCityIdByName(cityName)
+	cityId, err := a.repo.GetCityIdByName(cityName)
 
 	if err != nil {
-		logrus.Error("Getting city id by name error: %s", err.Error())
-		return shortCityInfo, err
+		logrus.Error("Getting city id by name error (GetShortCityWeatherDataByName func): %s", err.Error())
+		return shortCityWeatherData, err
 	}
 
-	list, err := a.repo.GetAllCityTempRowsByCityNameAfterDate(cityId, curentTime)
+	cityWeatherDataListForTimeAfterDate, err := a.repo.GetCityWeatherDataListForTimeAfterDate(cityId, curentTime)
 
 	var avgTemp float64
 	var dateList []string
 
-	for _, v := range list {
+	for _, v := range cityWeatherDataListForTimeAfterDate {
 		avgTemp = avgTemp + v.Temp
 		dateList = append(dateList, v.Date)
 	}
 
-	avgTemp = avgTemp / float64(len(list))
+	avgTemp = avgTemp / float64(len(cityWeatherDataListForTimeAfterDate))
 
 	sort.Slice(dateList, func(i, j int) bool {
 		return dateList[i] < dateList[j]
 	})
 
-	var fullInfo L3WB.AllCityInfoJson
-	err = json.Unmarshal(list[0].Full_info, &fullInfo)
+	var fullCityGeoAndWeatherData L3WB.FullCityGeoAndWeatherData
+	err = json.Unmarshal(cityWeatherDataListForTimeAfterDate[0].Full_info, &fullCityGeoAndWeatherData)
 	if err != nil {
-		logrus.Error("JSON decoding error (getting full_info in GetAllCityTempRowsByCityNameAfterDate): %s", err.Error())
+		logrus.Error("JSON decoding error (GetShortCityWeatherDataByName func): %s", err.Error())
 	}
 
-	shortCityInfo.AvgTemp = avgTemp
-	shortCityInfo.Date = dateList
-	shortCityInfo.Country = fullInfo.City.Country
+	shortCityWeatherData.AvgTemp = avgTemp
+	shortCityWeatherData.Date = dateList
+	shortCityWeatherData.Country = fullCityGeoAndWeatherData.CityGeoData.Country
 
-	return shortCityInfo, nil
+	return shortCityWeatherData, nil
 }
 
-func (a *apiService) GetFullCityInfo(cityName string, date string) (L3WB.AllCityInfoJson, error) {
-	var allCityInfo L3WB.AllCityInfoJson
+func (a *apiService) GetFullCityWeatherData(cityName string, date string) (L3WB.FullCityGeoAndWeatherData, error) {
+	var fullCityGeoAndWeatherData L3WB.FullCityGeoAndWeatherData
 
-	cityId, err := a.repo.ReturnCityIdByName(cityName)
+	cityId, err := a.repo.GetCityIdByName(cityName)
 
 	if err != nil {
-		logrus.Error("Getting city id by name error (in getting full temp info route): %s", err.Error())
-		return allCityInfo, err
+		logrus.Error("Getting city id by name error (GetFullCityWeatherData func): %s", err.Error())
+		return fullCityGeoAndWeatherData, err
 	}
 
-	cutyTempRow, err := a.repo.GetCityTempRowByDate(cityId, date)
+	cityWeatherDataByDate, err := a.repo.GetCityWeatherDataByDate(cityId, date)
 	if err != nil {
-		logrus.Error("Getting full city info error (in getting full temp info route): %s", err.Error())
-		return allCityInfo, err
+		logrus.Error("Getting full city info error (GetFullCityWeatherData func): %s", err.Error())
+		return fullCityGeoAndWeatherData, err
 	}
 
-	err = json.Unmarshal(cutyTempRow.Full_info, &allCityInfo)
+	err = json.Unmarshal(cityWeatherDataByDate.Full_info, &fullCityGeoAndWeatherData)
 	if err != nil {
-		logrus.Error("JSON decoding error (getting full_info in GetFullCityInfo): %s", err.Error())
-		return allCityInfo, err
+		logrus.Error("JSON decoding error (GetFullCityWeatherData func): %s", err.Error())
+		return fullCityGeoAndWeatherData, err
 	}
 
-	return allCityInfo, nil
+	return fullCityGeoAndWeatherData, nil
 }

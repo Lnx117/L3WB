@@ -6,13 +6,13 @@ import (
 )
 
 type PostgresQueries interface {
-	GetCityNameList() ([]L3WB.CityList, error)
-	UpdateCitiesGeo(cityInfoList []L3WB.CityInfo)
-	GetCitiesGeoList() ([]L3WB.CityGeo, error)
-	InsertOrUpdateCitiesTemperatureInfo(CityTempMain []L3WB.CityTempInfo)
-	ReturnCityIdByName(cityName string) (int, error)
-	GetAllCityTempRowsByCityNameAfterDate(cityId int, date string) ([]L3WB.CityTemp, error)
-	GetCityTempRowByDate(cityId int, date string) (L3WB.CityTemp, error)
+	GetCityNameAndIdList() ([]L3WB.CityNameAndId, error)
+	UpdateCitiesGeoData([]L3WB.CityGeoData)
+	GetCitiesLatAndLonList() ([]L3WB.CityLatAndLon, error)
+	InsertOrUpdateCitiesWeatherData([]L3WB.CityWeatherDataForFiveDays)
+	GetCityIdByName(string) (int, error)
+	GetCityWeatherDataListForTimeAfterDate(int, string) ([]L3WB.CityWeatherDataTable, error)
+	GetCityWeatherDataByDate(int, string) (L3WB.CityWeatherDataTable, error)
 }
 
 type Repository struct {

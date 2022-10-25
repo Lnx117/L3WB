@@ -1,37 +1,36 @@
 package L3WB
 
-type CityList struct {
+type CityNameAndId struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-type CityInfo struct {
+type CityGeoData struct {
 	Id      int     `json:"id"`
 	Name    string  `json:"name"`
 	Lat     float64 `json:"lat"`
 	Lon     float64 `json:"lon"`
 	Country string  `json:"country"`
-	State   string  `json:"state"`
 }
-type CityTemp struct {
+type CityWeatherDataTable struct {
 	CityId    int
 	Temp      float64
 	Date      string
 	Full_info []byte
 }
 
-type CityGeo struct {
+type CityLatAndLon struct {
 	Id  int     `json:"id"`
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
 }
 
-type CityTempInfo struct {
+type CityWeatherDataForFiveDays struct {
 	Cod     string `json:"cod"`
 	Message int    `json:"message"`
 	Cnt     int    `json:"cnt"`
 	CitiId  int
-	List    []AllCityInfo `json:"list"`
+	List    []CityWeatherData `json:"list"`
 	City    struct {
 		ID    int    `json:"id"`
 		Name  string `json:"name"`
@@ -47,7 +46,7 @@ type CityTempInfo struct {
 	} `json:"city"`
 }
 
-type AllCityInfo struct {
+type CityWeatherData struct {
 	Dt   int `json:"dt"`
 	Main struct {
 		Temp      float64 `json:"temp"`
@@ -85,9 +84,9 @@ type AllCityInfo struct {
 	} `json:"rain,omitempty"`
 }
 
-type AllCityInfoJson struct {
-	CityTempInfo AllCityInfo
-	City         struct {
+type FullCityGeoAndWeatherData struct {
+	CityWeatherData CityWeatherData
+	CityGeoData     struct {
 		ID    int    `json:"id"`
 		Name  string `json:"name"`
 		Coord struct {
@@ -102,7 +101,7 @@ type AllCityInfoJson struct {
 	} `json:"city"`
 }
 
-type ShortCityInfoApiAnswer struct {
+type ShortCityWeatherData struct {
 	Country  string
 	CityName string
 	AvgTemp  float64

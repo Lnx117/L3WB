@@ -6,16 +6,16 @@ import (
 )
 
 type Geocoding interface {
-	GetCitiesGeoList(cityList []L3WB.CityList) []L3WB.CityInfo
-	GetCitiesTemperatureInfo(CityGeo []L3WB.CityGeo) []L3WB.CityTempInfo
+	GetCitiesGeoData([]L3WB.CityNameAndId) []L3WB.CityGeoData
+	GetCitiesOpenweathermapData([]L3WB.CityLatAndLon) []L3WB.CityWeatherDataForFiveDays
 	BackgroundUpdatingProcess()
 	GetGeoAboutAllCities()
 }
 
 type Api interface {
-	GetApiCityList() ([]string, error)
-	GetShortCityInfo(cityName string) (L3WB.ShortCityInfoApiAnswer, error)
-	GetFullCityInfo(cityName string, date string) (L3WB.AllCityInfoJson, error)
+	GetCityNameAndIdListFromDb() ([]string, error)
+	GetShortCityWeatherDataByName(string) (L3WB.ShortCityWeatherData, error)
+	GetFullCityWeatherData(string, string) (L3WB.FullCityGeoAndWeatherData, error)
 }
 
 type Service struct {

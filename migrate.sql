@@ -6,8 +6,7 @@ CREATE TABLE cityInfo
     Name CHARACTER VARYING(30),
     Lat real,
     Lon real,
-    Country CHARACTER VARYING(4),
-    State CHARACTER VARYING(30)
+    Country CHARACTER VARYING(4)
 );
 
 INSERT INTO cityinfo (Name) VALUES 
