@@ -121,9 +121,14 @@ func (g *geocodingService) BackgroundUpdatingProcess() {
 	}
 }
 
-func (g *geocodingService) GetAllStartData() {
+/* Collect geo data from openweathermap for every city (coordinates, state, country etc.) */
+func (g *geocodingService) GetGeoAboutAllCities() {
+
 	/* Getting city's names from db */
-	CityNameList, _ := g.repo.GetCityNameList()
+	CityNameList, err := g.repo.GetCityNameList()
+	if err != nil {
+		logrus.Error("JSON decoding error (Getting city temperature info): %s", err.Error())
+	}
 
 	/* Getting Coordinates for every city from geoApi*/
 	CitiesGeoList := g.GetCitiesGeoList(CityNameList)
