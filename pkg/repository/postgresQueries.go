@@ -139,7 +139,6 @@ func (p *postgresQueries) GetAllCityTempRowsByCityNameAfterDate(cityId int, date
 		list = append(list, cityTempItem)
 	}
 
-	fmt.Println(list)
 	return list, err
 }
 

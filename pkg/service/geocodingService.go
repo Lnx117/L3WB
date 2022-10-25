@@ -117,7 +117,6 @@ func (g *geocodingService) BackgroundUpdatingProcess() {
 		/* Save temperature for every city and time to db*/
 		g.repo.InsertOrUpdateCitiesTemperatureInfo(CitiesTemperatureInfo)
 
-		fmt.Println("Сработка функции")
 		time.Sleep(60 * time.Second)
 	}
 }

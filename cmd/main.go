@@ -22,12 +22,12 @@ import (
 func main() {
 	//Init config file
 	if err := initConfig(); err != nil {
-		logrus.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("initializing configs error: %s", err.Error())
 	}
 
 	//Init env file
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error loading env variables: %s", err.Error())
+		logrus.Fatalf("loading env variables error: %s", err.Error())
 	}
 
 	//Init db
@@ -43,13 +43,15 @@ func main() {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
-	//Dependency injection
+	/* Dependency injection */
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 
 	/* Main part */
-	services.Geocoding.GetAllStartData()
+
+	/* Getting all geo data about cities */
+	services.Geocoding.GetGeoAboutAllCities()
 	/* Update temperature info for every city every minute */
 	go services.Geocoding.BackgroundUpdatingProcess()
 

@@ -77,8 +77,8 @@ func (a *apiService) GetShortCityInfo(cityName string) (L3WB.ShortCityInfoApiAns
 	return shortCityInfo, nil
 }
 
-func (a *apiService) GetFullCityInfo(cityName string, date string) (L3WB.AllCityInfo, error) {
-	var allCityInfo L3WB.AllCityInfo
+func (a *apiService) GetFullCityInfo(cityName string, date string) (L3WB.AllCityInfoJson, error) {
+	var allCityInfo L3WB.AllCityInfoJson
 
 	cityId, err := a.repo.ReturnCityIdByName(cityName)
 
