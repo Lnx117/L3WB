@@ -1,0 +1,206 @@
+basePath: /
+definitions:
+  L3WB.AllCityInfo:
+    properties:
+      clouds:
+        properties:
+          all:
+            type: integer
+        type: object
+      dt:
+        type: integer
+      dt_txt:
+        type: string
+      main:
+        properties:
+          feels_like:
+            type: number
+          grnd_level:
+            type: integer
+          humidity:
+            type: integer
+          pressure:
+            type: integer
+          sea_level:
+            type: integer
+          temp:
+            type: number
+          temp_kf:
+            type: number
+          temp_max:
+            type: number
+          temp_min:
+            type: number
+        type: object
+      pop:
+        type: number
+      rain:
+        properties:
+          3h:
+            type: number
+        type: object
+      sys:
+        properties:
+          pod:
+            type: string
+        type: object
+      visibility:
+        type: integer
+      weather:
+        items:
+          properties:
+            description:
+              type: string
+            icon:
+              type: string
+            id:
+              type: integer
+            main:
+              type: string
+          type: object
+        type: array
+      wind:
+        properties:
+          deg:
+            type: integer
+          gust:
+            type: number
+          speed:
+            type: number
+        type: object
+    type: object
+  L3WB.ShortCityInfoApiAnswer:
+    properties:
+      avgTemp:
+        type: number
+      cityName:
+        type: string
+      country:
+        type: string
+      date:
+        items:
+          type: string
+        type: array
+    type: object
+  handler.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: This is a simple api that shows a weather forecast.
+  title: Weather forecast
+  version: "1.0"
+paths:
+  /api/cityList:
+    get:
+      consumes:
+      - application/json
+      description: Get all cities avaliable for forecast
+      operationId: apiGetCityList
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: GetCityList
+  /api/full_info/{cityName}/{date}:
+    get:
+      consumes:
+      - application/json
+      description: Show full weather info
+      operationId: fullInfo
+      parameters:
+      - description: City name
+        in: path
+        name: cityName
+        required: true
+        type: string
+      - description: Date
+        in: path
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/L3WB.AllCityInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: FullInfo
+  /api/shortInfo/{cityName}:
+    get:
+      consumes:
+      - application/json
+      description: Show short weather info
+      operationId: shortInfo
+      parameters:
+      - description: City name
+        in: path
+        name: cityName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/L3WB.ShortCityInfoApiAnswer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: ShortCityInfo
+swagger: "2.0"
