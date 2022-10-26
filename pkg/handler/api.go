@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -32,18 +33,22 @@ func (h *Handler) apiGetCityList(c *gin.Context) {
 // @Summary ShortCityInfo
 // @Description Show short weather info
 // @ID shortInfo
-// @Param cityName path string true "City name"
+// @Param cityName path string true "City name in any case"
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} L3WB.ShortCityInfoApiAnswer
+// @Success 200 {object} L3WB.ShortCityWeatherData
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/shortInfo/{cityName} [get]
 func (h *Handler) shortInfo(c *gin.Context) {
 	cityName := c.Param("cityName")
-	shortCityWeatherData, err := h.services.GetShortCityWeatherDataByName(cityName)
+	shortCityWeatherData, err := h.services.GetShortCityWeatherDataByName(strings.ToLower(cityName))
 	if err != nil {
+		if strings.Contains(err.Error(), "sql: no rows in result set") {
+			newErrorResponse(c, http.StatusInternalServerError, "Make shure you use right city name. Just copy it from /cityList answer! /n"+err.Error())
+			return
+		}
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -54,11 +59,11 @@ func (h *Handler) shortInfo(c *gin.Context) {
 // @Summary FullInfo
 // @Description Show full weather info
 // @ID fullInfo
-// @Param cityName path string true "City name"
-// @Param date path string true "Date"
+// @Param cityName path string true "City name in any case"
+// @Param date path string true "Date in 2022-10-26T12:00:00Z format"
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} L3WB.AllCityInfo
+// @Success 200 {object} L3WB.FullCityGeoAndWeatherData
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
@@ -68,12 +73,16 @@ func (h *Handler) fullInfo(c *gin.Context) {
 	stringDate := c.Param("date")
 	t, err := time.Parse(time.RFC3339, stringDate)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, "Make shure you use 2022-10-26T12:00:00Z date format. Just copy it from /shortInfo answer!")
 		return
 	}
 
-	fullCityWeatherData, err := h.services.GetFullCityWeatherData(cityName, t.Format("2006-01-02 15:04:05"))
+	fullCityWeatherData, err := h.services.GetFullCityWeatherData(strings.ToLower(cityName), t.Format("2006-01-02 15:04:05"))
 	if err != nil {
+		if strings.Contains(err.Error(), "sql: no rows in result set") {
+			newErrorResponse(c, http.StatusInternalServerError, "Make shure you use 2022-10-26T12:00:00Z date format and right city name. Just copy it from /shortInfo and /cityList answers! /n"+err.Error())
+			return
+		}
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

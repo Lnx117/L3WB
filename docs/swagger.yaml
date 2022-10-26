@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  L3WB.AllCityInfo:
+  L3WB.CityWeatherData:
     properties:
       clouds:
         properties:
@@ -69,7 +69,36 @@ definitions:
             type: number
         type: object
     type: object
-  L3WB.ShortCityInfoApiAnswer:
+  L3WB.FullCityGeoAndWeatherData:
+    properties:
+      city:
+        properties:
+          coord:
+            properties:
+              lat:
+                type: number
+              lon:
+                type: number
+            type: object
+          country:
+            type: string
+          id:
+            type: integer
+          name:
+            type: string
+          population:
+            type: integer
+          sunrise:
+            type: integer
+          sunset:
+            type: integer
+          timezone:
+            type: integer
+        type: object
+      cityWeatherData:
+        $ref: '#/definitions/L3WB.CityWeatherData'
+    type: object
+  L3WB.ShortCityWeatherData:
     properties:
       avgTemp:
         type: number
@@ -133,12 +162,12 @@ paths:
       description: Show full weather info
       operationId: fullInfo
       parameters:
-      - description: City name
+      - description: City name in any case
         in: path
         name: cityName
         required: true
         type: string
-      - description: Date
+      - description: Date in 2022-10-26T12:00:00Z format
         in: path
         name: date
         required: true
@@ -149,7 +178,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/L3WB.AllCityInfo'
+            $ref: '#/definitions/L3WB.FullCityGeoAndWeatherData'
         "400":
           description: Bad Request
           schema:
@@ -174,7 +203,7 @@ paths:
       description: Show short weather info
       operationId: shortInfo
       parameters:
-      - description: City name
+      - description: City name in any case
         in: path
         name: cityName
         required: true
@@ -185,7 +214,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/L3WB.ShortCityInfoApiAnswer'
+            $ref: '#/definitions/L3WB.ShortCityWeatherData'
         "400":
           description: Bad Request
           schema:

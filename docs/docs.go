@@ -78,14 +78,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "City name",
+                        "description": "City name in any case",
                         "name": "cityName",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Date",
+                        "description": "Date in 2022-10-26T12:00:00Z format",
                         "name": "date",
                         "in": "path",
                         "required": true
@@ -95,7 +95,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/L3WB.AllCityInfo"
+                            "$ref": "#/definitions/L3WB.FullCityGeoAndWeatherData"
                         }
                     },
                     "400": {
@@ -139,7 +139,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "City name",
+                        "description": "City name in any case",
                         "name": "cityName",
                         "in": "path",
                         "required": true
@@ -149,7 +149,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/L3WB.ShortCityInfoApiAnswer"
+                            "$ref": "#/definitions/L3WB.ShortCityWeatherData"
                         }
                     },
                     "400": {
@@ -181,7 +181,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "L3WB.AllCityInfo": {
+        "L3WB.CityWeatherData": {
             "type": "object",
             "properties": {
                 "clouds": {
@@ -288,7 +288,52 @@ const docTemplate = `{
                 }
             }
         },
-        "L3WB.ShortCityInfoApiAnswer": {
+        "L3WB.FullCityGeoAndWeatherData": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "object",
+                    "properties": {
+                        "coord": {
+                            "type": "object",
+                            "properties": {
+                                "lat": {
+                                    "type": "number"
+                                },
+                                "lon": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "country": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "integer"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "population": {
+                            "type": "integer"
+                        },
+                        "sunrise": {
+                            "type": "integer"
+                        },
+                        "sunset": {
+                            "type": "integer"
+                        },
+                        "timezone": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "cityWeatherData": {
+                    "$ref": "#/definitions/L3WB.CityWeatherData"
+                }
+            }
+        },
+        "L3WB.ShortCityWeatherData": {
             "type": "object",
             "properties": {
                 "avgTemp": {

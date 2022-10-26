@@ -5,6 +5,8 @@ import (
 	"L3WB/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Geocoding interface {
 	GetCitiesGeoData([]L3WB.CityNameAndId) []L3WB.CityGeoData
 	GetCitiesOpenweathermapData([]L3WB.CityLatAndLon) []L3WB.CityWeatherDataForFiveDays

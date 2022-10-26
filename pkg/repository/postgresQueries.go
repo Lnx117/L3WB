@@ -107,7 +107,7 @@ func (p *postgresQueries) InsertOrUpdateCitiesWeatherData(citiesWeatherDataForFi
 
 func (p *postgresQueries) GetCityIdByName(cityName string) (int, error) {
 	var id int
-	query := fmt.Sprintf("SELECT ID FROM %s WHERE NAME = '%s'", cityTable, cityName)
+	query := fmt.Sprintf("SELECT ID FROM %s WHERE LOWER(NAME) = '%s'", cityTable, cityName)
 
 	row := p.db.QueryRow(query)
 	if err := row.Scan(&id); err != nil {

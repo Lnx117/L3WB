@@ -1,5 +1,7 @@
+/* First step */
 CREATE DATABASE myschema;
 
+/* In myschema database */
 CREATE TABLE cityInfo
 (
     Id SERIAL PRIMARY KEY,
